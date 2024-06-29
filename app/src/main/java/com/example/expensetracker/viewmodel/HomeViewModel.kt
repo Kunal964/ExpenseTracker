@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.expensetracker.R
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import com.example.expensetracker.Utils
 import com.example.expensetracker.data.ExpenseDataBase
 import com.example.expensetracker.data.dao.ExpenseDao
 import com.example.expensetracker.data.model.ExpenseEntity
 
-class HomeViewModel(dao: ExpenseDao): ViewModel() {
+class HomeViewModel(private val dao: ExpenseDao): ViewModel() {
     val expenses = dao.getAllExpense()
 
     fun getBalance(list: List<ExpenseEntity>) : String {
@@ -22,7 +24,7 @@ class HomeViewModel(dao: ExpenseDao): ViewModel() {
                 balance -= it.amount
             }
         }
-        return "$ ${Utils.formatToDecimalValue(balance)}"
+        return "₹ ${Utils.formatToDecimalValue(balance)}"
     }
 
     fun getTotalExpense(list: List<ExpenseEntity>) : String {
@@ -31,38 +33,35 @@ class HomeViewModel(dao: ExpenseDao): ViewModel() {
             if (it.type == "Expense") {
                 total += it.amount
             }
-            else {
-                total -= it.amount
-            }
         }
-        return "$ ${Utils.formatToDecimalValue(total)}"
-
-
-
+        return "₹ ${Utils.formatToDecimalValue(total)}"
     }
+
     fun getTotalIncome(list: List<ExpenseEntity>) : String {
         var totalIncome = 0.0
         list.forEach{
             if (it.type == "Income") {
                 totalIncome += it.amount
             }
-            else {
-                totalIncome -= it.amount
-            }
         }
-        return "$ ${Utils.formatToDecimalValue(totalIncome)}"
+        return "₹ ${Utils.formatToDecimalValue(totalIncome)}"
     }
 
     // Here I'll add the icon of the category
 
     fun getItemIcon(item: ExpenseEntity): Int {
-        if(item.category == "Youtube")
-            return R.drawable.ic_youtube
-        else if (item.category == "Netflix")
-            return R.drawable.ic_netflix
-        else if (item.category == "Google")
-            return  R.drawable.ic_google
-        return R.drawable.ic_paytm
+        return when (item.category) {
+            "Youtube" -> R.drawable.ic_youtube
+            "Netflix" -> R.drawable.ic_netflix
+            "Google" -> R.drawable.ic_google
+            else -> R.drawable.ic_paytm
+        }
+    }
+
+    fun clearTransactions() {
+        viewModelScope.launch {
+            dao.deleteAll()
+        }
     }
 }
 

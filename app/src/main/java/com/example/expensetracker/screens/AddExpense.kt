@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.expensetracker
+package com.example.expensetracker.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.expensetracker.R
+import com.example.expensetracker.Utils
 import com.example.expensetracker.data.model.ExpenseEntity
 import com.example.expensetracker.viewmodel.AddExpenseViewModel
 import com.example.expensetracker.viewmodel.AddExpenseViewModelFactory
@@ -81,7 +83,7 @@ fun AddExpense(navController: NavController) {
                 Image(painter = painterResource(id = R.drawable.chevron_left), contentDescription = null,
                     modifier = Modifier.align(Alignment.CenterStart)
                         .clickable {
-                            navController.navigate("/home")
+                            navController.navigate("bottomBar")
                         })
                 ExpenseTextView(
                     text = "Add Expense",
@@ -104,7 +106,7 @@ fun AddExpense(navController: NavController) {
                 }, onAddExpenseClick = {
                     coroutineScope.launch {
                         if (viewModel.addExpense(it)) {
-                            navController.popBackStack()
+                            navController.navigate("bottomBar")   // Here Navigation perform When i press Add Expense Button
                         }
                     }
             })

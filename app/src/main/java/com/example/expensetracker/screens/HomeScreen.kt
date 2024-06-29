@@ -1,7 +1,6 @@
-package com.example.expensetracker
+package com.example.expensetracker.screens
 
-
-
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,10 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,81 +41,115 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.expensetracker.R
 import com.example.expensetracker.data.model.ExpenseEntity
 import com.example.expensetracker.viewmodel.HomeViewModel
 import com.example.expensetracker.viewmodel.HomeViewModelFactory
 import com.example.expensetracker.widget.ExpenseTextView
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navController: NavController) {
-    val viewModel :HomeViewModel = HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
+    val viewModel: HomeViewModel = HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
+    val showDialog = remember { mutableStateOf(false) }
+    val state = viewModel.expenses.collectAsState(initial = emptyList())
+    val expenses = viewModel.getTotalExpense(state.value)
+    val income = viewModel.getTotalIncome(state.value)
+    val balance = viewModel.getBalance(state.value)
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (nameRow, list, card, topBar, add) = createRefs()
+    Scaffold(
+    ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+                val (nameRow, list, card, topBar) = createRefs()
 
-            // Top Bar
-            Image(painter = painterResource(id = R.drawable.ic_topbar), contentDescription = null,
-                modifier = Modifier.constrainAs(topBar) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            )
-            Image(painter = painterResource(id = R.drawable.ic_top), contentDescription = null)
-
-            // Welcome Box
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 62.dp, start = 16.dp, end = 16.dp)
-                    .constrainAs(nameRow) {
+                // Top Bar
+                Image(
+                    painter = painterResource(id = R.drawable.ic_topbar),
+                    contentDescription = null,
+                    modifier = Modifier.constrainAs(topBar) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    }) {
-                Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                    ExpenseTextView(text = "Welcome,", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                )
+                Image(painter = painterResource(id = R.drawable.ic_top), contentDescription = null)
+
+                // Welcome Box
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 62.dp, start = 16.dp, end = 16.dp)
+                        .constrainAs(nameRow) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                ) {
+                    Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                        ExpenseTextView(text = "Welcome,", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_notification),
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
                 }
-                Image(painter = painterResource(id = R.drawable.ic_notification), contentDescription = null,
-                    modifier = Modifier.align(Alignment.CenterEnd)
+
+                CardItem(
+                    modifier = Modifier.constrainAs(card) {
+                        top.linkTo(nameRow.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                    balance = balance,
+                    income = income,
+                    expenses = expenses,
+                    showDialog = showDialog
+                )
+
+                TransactionList(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .constrainAs(list) {
+                            top.linkTo(card.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.fillToConstraints
+                        },
+                    list = state.value,
+                    viewModel = viewModel
                 )
             }
-            val state =    viewModel.expenses.collectAsState(initial = emptyList())
-            val expenses = viewModel.getTotalExpense(state.value)
-            val income =   viewModel.getTotalIncome(state.value)
-            val balance =  viewModel.getBalance(state.value)
-            CardItem(modifier = Modifier
-                .constrainAs(card){
-                    top.linkTo(nameRow.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }, balance, income, expenses)
-            TransactionList(modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(list) {
-                    top.linkTo(card.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-
-                }, list = state.value, viewModel
-                )
-            Image(painter = painterResource(id = android.R.drawable.ic_menu_add), contentDescription = null, modifier = Modifier.constrainAs(add){
-                bottom.linkTo(list.bottom, margin = 30.dp)
-                start.linkTo(parent.start, margin = 170.dp)
-            }.size(50.dp)
-            .clip(CircleShape)
-                .clickable {
-                    navController.navigate("/add")
-                }
-            )
         }
     }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = { Text(text = "Clear Recent Transactions") },
+            text = { Text(text = "Do you want to clear the recent transactions?") },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.clearTransactions()
+                    showDialog.value = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog.value = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 }
+
+
 @Composable
-fun CardItem(modifier: Modifier, balance: String, income: String, expenses: String) {
+fun CardItem(modifier: Modifier, balance: String, income: String, expenses: String, showDialog: MutableState<Boolean>) {
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -137,7 +176,9 @@ fun CardItem(modifier: Modifier, balance: String, income: String, expenses: Stri
             Image(
                 painter = painterResource(id = R.drawable.dots_menu),
                 contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable { showDialog.value = true }
             )
         }
         Box(
@@ -160,6 +201,7 @@ fun CardItem(modifier: Modifier, balance: String, income: String, expenses: Stri
         }
     }
 }
+
 @Composable
 fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int)  {
     Column(modifier = modifier) {
@@ -175,16 +217,16 @@ fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int)  
 @Composable
 fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: HomeViewModel) {
     LazyColumn(modifier = modifier.padding(16.dp)) {
-       item {
-           Box(modifier = Modifier.fillMaxWidth()) {
-               ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
-               ExpenseTextView(
-                   text = "See All",
-                   fontSize = 17.sp,
-                   modifier = Modifier.align(Alignment.CenterEnd)
-               )
-           }
-       }
+        item {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
+                ExpenseTextView(
+                    text = "See All",
+                    fontSize = 17.sp,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
+            }
+        }
         items(list) { item ->
             TransactionItem(
                 title = item.title,
@@ -218,7 +260,6 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
             color = color, fontWeight = FontWeight.SemiBold)
     }
 }
-
 
 @Preview
 @Composable

@@ -22,4 +22,7 @@ interface ExpenseDao {
 
     @Update
     suspend fun updateExpense(expenseEntity: ExpenseEntity)
+
+    @Query("DELETE FROM expenseentity")
+    suspend fun deleteAll()
 }

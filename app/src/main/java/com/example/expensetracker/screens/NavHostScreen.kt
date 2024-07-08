@@ -1,6 +1,6 @@
 package com.example.expensetracker.screens
 
-import BottomBarScreen
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +18,9 @@ fun NavHostScreen() {
         }
         composable(route = "/add") {
             AddExpense(navController)
+        }
+        composable(route = "/person") {
+            PersonScreen(navController)
         }
     }
 }

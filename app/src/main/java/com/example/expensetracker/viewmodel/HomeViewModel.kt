@@ -54,6 +54,8 @@ class HomeViewModel(private val dao: ExpenseDao): ViewModel() {
             "Youtube" -> R.drawable.ic_youtube
             "Netflix" -> R.drawable.ic_netflix
             "Google" -> R.drawable.ic_google
+            "Person" -> R.drawable.person
+            "Salary" -> R.drawable.money
             else -> R.drawable.ic_paytm
         }
     }

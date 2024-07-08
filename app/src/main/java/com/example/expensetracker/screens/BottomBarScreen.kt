@@ -1,8 +1,11 @@
+package com.example.expensetracker.screens
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,8 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.expensetracker.screens.AddExpense
-import com.example.expensetracker.screens.HomeScreen
 import com.example.expensetracker.data.NavItem
 
 @Composable
@@ -28,7 +29,7 @@ fun BottomBarScreen(navController: NavController) {
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
         NavItem("Add", Icons.Default.AddCircle),
-        NavItem("Settings", Icons.Default.Settings)
+        NavItem("Person", Icons.Default.Person)
     )
     var selectedIndex by remember { mutableIntStateOf(0) }
 
@@ -43,11 +44,6 @@ fun BottomBarScreen(navController: NavController) {
                         selected = selectedIndex == index,
                         onClick = {
                             selectedIndex = index
-//                            when (index) {
-//                                0 -> navController.navigate("/home")
-//                                1 -> navController.navigate("/add")
-//                                // Handle navigation for settings or other items if needed
-//                            }
                         },
                         icon = {
                             Icon(imageVector = navItem.icon, contentDescription = "Icons")
@@ -73,6 +69,7 @@ fun ContentScreen(navController: NavController, modifier: Modifier = Modifier, s
     when (selectedIndex) {
         0 -> HomeScreen(navController = navController)
         1 -> AddExpense(navController = navController)
+        2 -> PersonScreen(navController = navController)
         // Add additional cases if there are more items in the bottom bar
     }
 }

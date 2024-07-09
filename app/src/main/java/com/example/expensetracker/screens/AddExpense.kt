@@ -165,7 +165,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model:ExpenseEntity) -> Unit
         // DropDown
         ExpenseTextView(text = "Category", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        ExpenseDropDown(listOf("Netflix","Paytm","Google","Salary","Youtube","Person"),
+        ExpenseDropDown(listOf("Youtube","Netflix","Google","Person","Salary","Paytm"),
             onItemSelected = {
                 category.value = it  // When user selected any category it store into the category variable
             })

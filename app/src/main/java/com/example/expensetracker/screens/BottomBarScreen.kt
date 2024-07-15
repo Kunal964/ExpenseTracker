@@ -67,7 +67,7 @@ fun BottomBarScreen(navController: NavController) {
 @Composable
 fun ContentScreen(navController: NavController, modifier: Modifier = Modifier, selectedIndex: Int) {
     when (selectedIndex) {
-        0 -> HomeScreen(navController = navController)
+        0 -> HomeScreen(navController = navController, modifier = modifier)
         1 -> AddExpense(navController = navController)
         2 -> PersonScreen(navController = navController)
         // Add additional cases if there are more items in the bottom bar

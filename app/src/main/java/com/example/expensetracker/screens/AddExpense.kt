@@ -98,7 +98,7 @@ fun AddExpense(navController: NavController) {
                     modifier = Modifier.align(Alignment.CenterEnd))
             }
             DataForm(modifier = Modifier
-                .padding(top = 60.dp)
+                .padding(top = 10.dp)
                 .constrainAs(card) {
                     top.linkTo(nameRow.bottom)
                     start.linkTo(parent.start)

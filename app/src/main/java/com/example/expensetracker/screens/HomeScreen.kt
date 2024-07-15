@@ -49,7 +49,7 @@ import com.example.expensetracker.widget.ExpenseTextView
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
     val viewModel: HomeViewModel = HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
     val showDialog = remember { mutableStateOf(false) }
     val state = viewModel.expenses.collectAsState(initial = emptyList())
@@ -58,20 +58,37 @@ fun HomeScreen(navController: NavController) {
     val balance = viewModel.getBalance(state.value)
 
     Scaffold(
+        topBar = {
+            Image(painter = painterResource(id = R.drawable.ic_topbar), contentDescription = null)
+            Image(painter = painterResource(id = R.drawable.ic_top), contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 13.dp))
+        }
     ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        // Your content goes here
+    }
+
+
+    Scaffold(modifier = modifier.fillMaxSize()) {
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .fillMaxWidth()) {
+            ConstraintLayout(modifier = Modifier
+                .fillMaxSize()
+                .fillMaxWidth()) {
                 val (nameRow, list, card, topBar) = createRefs()
 
                 // Top Bar
                 Image(
                     painter = painterResource(id = R.drawable.ic_topbar),
                     contentDescription = null,
-                    modifier = Modifier.constrainAs(topBar) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                    modifier = Modifier
+                        .fillMaxWidth() // Adjust height as needed
+                        .constrainAs(topBar) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
                 )
                 Image(painter = painterResource(id = R.drawable.ic_top), contentDescription = null)
 
@@ -216,7 +233,7 @@ fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int)  
 
 @Composable
 fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: HomeViewModel) {
-    LazyColumn(modifier = modifier.padding(16.dp)) {
+    LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
                 ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)

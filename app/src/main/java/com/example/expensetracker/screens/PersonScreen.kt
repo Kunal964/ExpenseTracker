@@ -41,7 +41,8 @@ import com.example.expensetracker.widget.ExpenseTextView
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PersonScreen(navController : NavController) {
-    Scaffold() {
+    Scaffold(
+    ) {
         Surface(modifier = Modifier.fillMaxSize()) {
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
                 val (nameRow, list, card, topBar) = createRefs()

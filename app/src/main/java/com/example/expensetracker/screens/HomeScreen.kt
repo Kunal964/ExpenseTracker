@@ -236,10 +236,10 @@ fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: Ho
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
-                ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
+                ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 ExpenseTextView(
                     text = "See All",
-                    fontSize = 17.sp,
+                    fontSize = 17.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }

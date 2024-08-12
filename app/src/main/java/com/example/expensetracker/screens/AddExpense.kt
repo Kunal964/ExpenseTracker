@@ -30,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -115,47 +116,63 @@ fun AddExpense(navController: NavController) {
 }
 
 @Composable
-fun DataForm(modifier: Modifier, onAddExpenseClick:(model:ExpenseEntity) -> Unit) {
+fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Unit) {
     val name = remember { mutableStateOf("") }
     val amount = remember { mutableStateOf("") }
     val date = remember { mutableStateOf(0L) }
-    val dateDialogVisibilty = remember { mutableStateOf(false) }
+    val dateDialogVisibility = remember { mutableStateOf(false) }
     val category = remember { mutableStateOf("") }
     val type = remember { mutableStateOf("") }
-    Column(modifier = modifier
-        .padding(16.dp)
-        .fillMaxWidth()
-        .shadow(16.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .background(Color.White)
-        .padding(16.dp)
-        .verticalScroll(rememberScrollState())
-    ) {
 
+    val isFormValid = remember {
+        derivedStateOf {
+            name.value.isNotEmpty() &&
+                    amount.value.isNotEmpty() &&
+                    amount.value.toDoubleOrNull() != null &&
+                    date.value != 0L &&
+                    category.value.isNotEmpty() &&
+                    type.value.isNotEmpty()
+        }
+    }
+
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .shadow(16.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         // Name
         ExpenseTextView(text = "Name", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = name.value, onValueChange = {
-            name.value = it
-        },modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = name.value,
+            onValueChange = { name.value = it },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         // Amount
         ExpenseTextView(text = "Amount", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = amount.value, onValueChange = {
-            amount.value = it
-        },modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = amount.value,
+            onValueChange = { amount.value = it },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        //Date
+        // Date
         ExpenseTextView(text = "Date", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
-            value = if(date.value == 0L) "" else Utils.fromatDatetoHumanReadableForm(date.value),
+            value = if (date.value == 0L) "" else Utils.fromatDatetoHumanReadableForm(date.value),
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { dateDialogVisibilty.value = true },
-                enabled = false,
+                .clickable { dateDialogVisibility.value = true },
+            enabled = false,
             colors = OutlinedTextFieldDefaults.colors(
                 disabledBorderColor = Color.Black,
                 disabledTextColor = Color.Black
@@ -165,51 +182,53 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model:ExpenseEntity) -> Unit
         // DropDown
         ExpenseTextView(text = "Category", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        ExpenseDropDown(listOf("Youtube","Netflix","Google","Person","Salary","Paytm"),
-            onItemSelected = {
-                category.value = it  // When user selected any category it store into the category variable
-            })
+        ExpenseDropDown(listOf("Youtube", "Netflix", "Google", "Person", "Salary", "Paytm")) {
+            category.value = it  // When user selected any category it store into the category variable
+        }
 
-        //Type
+        // Type
         ExpenseTextView(text = "Type", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        ExpenseDropDown(listOf("Income","Expense"),
-            onItemSelected = {
-                type.value = it
-            })
-
+        ExpenseDropDown(listOf("Income", "Expense")) {
+            type.value = it
+        }
 
         Spacer(modifier = Modifier.size(12.dp))
-        Button(onClick = {
-            val model = ExpenseEntity(
-                null,
-                name.value,
-                amount.value.toDoubleOrNull() ?: 0.0,
-                Utils.fromatDatetoHumanReadableForm(date.value),
-                category.value,
-                type.value
-            )
-            onAddExpenseClick(model)
-        },
+        Button(
+            onClick = {
+                val model = ExpenseEntity(
+                    null,
+                    name.value,
+                    amount.value.toDoubleOrNull() ?: 0.0,
+                    Utils.fromatDatetoHumanReadableForm(date.value),
+                    category.value,
+                    type.value
+                )
+                onAddExpenseClick(model)    // Here When User click on the AddExpense Button All the variable data is store into the onAddExpenseClick
+            },
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple))
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple)),
+            enabled = isFormValid.value
         ) {
-            ExpenseTextView(text = "Add Expense", fontSize = 14.sp, color = Color.White,)
+            ExpenseTextView(text = "Add Expense", fontSize = 14.sp, color = Color.White)
         }
     }
-    if (dateDialogVisibilty.value){
+
+    if (dateDialogVisibility.value) {
         ExpenseDatePickerDialog(
             onDateSelected = {
                 date.value = it
-                dateDialogVisibilty.value = false
-             }, onDismiss = {
-                 dateDialogVisibilty.value = false
-            })
+                dateDialogVisibility.value = false
+            },
+            onDismiss = {
+                dateDialogVisibility.value = false
+            }
+        )
     }
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

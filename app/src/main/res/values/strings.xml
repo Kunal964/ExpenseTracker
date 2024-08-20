@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">ExpenseTracker</string>
+    <string name="hello">Hey, There</string>
+    <string name="create">Create an Account</string>
+    <string name="welcome">Welcome Back</string>
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="hidePassword">Hide Password</string>
+    <string name="showPassword">Show Password</string>
+    <string name="terms">By Continuing, you agree to our Privacy Policy and Terms and Conditions</string>
+    <string name="terms_and_use">Terms and Conditions</string>
+    <string name="register">Register</string>
+    <string name="login">Log In</string>
+    <string name="already">Already have an account? Log In</string>
+    <string name="forgot">Forgot your password?</string>
+
+    <string name="home">Home</string>
+    <string name="logout">Logout</string>
+    <string name="menu">Menu</string>
+    <string name="navigation_header">ExpenseTracker</string>
 </resources>

@@ -28,22 +28,22 @@ abstract  class ExpenseDataBase : RoomDatabase() {
             ).addCallback(object : Callback(){
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
-                    InitBasicData(context)
+//                    InitBasicData(context)
                 }
-                fun InitBasicData(context: Context) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val dao = getDatabase(context).expenseDao()
-                        dao.insertExpense(ExpenseEntity(1,"Salary",5000.40,
-                            System.currentTimeMillis().toString(), "Salary","Income"))
-                        dao.insertExpense(ExpenseEntity(2,"Google",2000.40,
-                            System.currentTimeMillis().toString(), "Google","Income"))
-                        dao.insertExpense(ExpenseEntity(3,"Netflix",5000.40,
-                            System.currentTimeMillis().toString(), "Netflix","Expense"))
-                        dao.insertExpense(ExpenseEntity(4,"Youtube",5000.40,
-                            System.currentTimeMillis().toString(), "Youtube","Expense"))
-
-                    }
-                }
+//                fun InitBasicData(context: Context) {
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        val dao = getDatabase(context).expenseDao()
+//                        dao.insertExpense(ExpenseEntity(1,"Salary",5000.40,
+//                            System.currentTimeMillis().toString(), "Salary","Income"))
+//                        dao.insertExpense(ExpenseEntity(2,"Google",2000.40,
+//                            System.currentTimeMillis().toString(), "Google","Income"))
+//                        dao.insertExpense(ExpenseEntity(3,"Netflix",5000.40,
+//                            System.currentTimeMillis().toString(), "Netflix","Expense"))
+//                        dao.insertExpense(ExpenseEntity(4,"Youtube",5000.40,
+//                            System.currentTimeMillis().toString(), "Youtube","Expense"))
+//
+//                    }
+//                }
 
 
             }).build()

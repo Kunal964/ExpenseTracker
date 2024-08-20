@@ -7,22 +7,28 @@ import com.example.expensetracker.data.ExpenseDataBase
 import com.example.expensetracker.data.dao.ExpenseDao
 import com.example.expensetracker.data.model.ExpenseEntity
 
-class AddExpenseViewModel(val dao: ExpenseDao): ViewModel() {
+class AddExpenseViewModel(
+    val dao: ExpenseDao,
+    val userId: String
+) : ViewModel() {
     suspend fun addExpense(expenseEntity: ExpenseEntity): Boolean {
         return try {
-            dao.insertExpense(expenseEntity)
+            dao.insertExpense(expenseEntity.copy(userId = userId))
             true
-        }
-        catch (ex: Throwable) {
+        } catch (ex: Throwable) {
             false
         }
     }
 }
-class AddExpenseViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+
+class AddExpenseViewModelFactory(
+    private val context: Context,
+    private val userId: String
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(AddExpenseViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(AddExpenseViewModel::class.java)) {
             val dao = ExpenseDataBase.getDatabase(context).expenseDao()
-            return AddExpenseViewModel(dao) as T
+            return AddExpenseViewModel(dao, userId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

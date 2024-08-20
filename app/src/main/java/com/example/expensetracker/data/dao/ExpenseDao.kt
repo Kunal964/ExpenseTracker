@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    @Query(" SELECT * FROM expenseentity")
-    fun getAllExpense(): Flow<List<ExpenseEntity>>
+    @Query("SELECT * FROM expenses WHERE userId = :userId")
+    fun getAllExpense(userId: String): Flow<List<ExpenseEntity>>
 
     @Insert
     suspend fun insertExpense(expenseEntity: ExpenseEntity)
@@ -23,6 +23,6 @@ interface ExpenseDao {
     @Update
     suspend fun updateExpense(expenseEntity: ExpenseEntity)
 
-    @Query("DELETE FROM expenseentity")
-    suspend fun deleteAll()
+    @Query("DELETE FROM expenses WHERE userId = :userId")
+    suspend fun deleteAll(userId: String)
 }

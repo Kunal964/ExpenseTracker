@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.expensetracker.R
@@ -58,12 +60,15 @@ import com.example.expensetracker.widget.ExpenseTextView
 import kotlinx.coroutines.launch
 
 @Composable
-fun AddExpense(navController: NavController) {
-    val viewModel = AddExpenseViewModelFactory(LocalContext.current).create(AddExpenseViewModel::class.java)
+fun AddExpense(navController: NavController, userId: String) {
+    val context = LocalContext.current
+    val viewModel: AddExpenseViewModel = viewModel(
+        factory = AddExpenseViewModelFactory(context, userId)
+    )
     val coroutineScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (nameRow, list, card, topBar) = createRefs()
+            val (nameRow, card, topBar) = createRefs()
 
             // Top Bar
             Image(painter = painterResource(id = R.drawable.ic_topbar), contentDescription = null,
@@ -107,19 +112,24 @@ fun AddExpense(navController: NavController) {
                 }, onAddExpenseClick = {
                     coroutineScope.launch {
                         if (viewModel.addExpense(it)) {
-                            navController.navigate("bottomBar")   // Here Navigation perform When i press Add Expense Button
+                            navController.navigate("bottomBar")   // Here Navigation perform When I press AddExpense Button
                         }
                     }
-            })
+            },
+                userId = userId)
         }
     }
 }
 
 @Composable
-fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Unit) {
+fun DataForm(
+    modifier: Modifier,
+    onAddExpenseClick:(model: ExpenseEntity) -> Unit,
+    userId: String
+             ) {
     val name = remember { mutableStateOf("") }
     val amount = remember { mutableStateOf("") }
-    val date = remember { mutableStateOf(0L) }
+    val date = remember { mutableLongStateOf(0L) }
     val dateDialogVisibility = remember { mutableStateOf(false) }
     val category = remember { mutableStateOf("") }
     val type = remember { mutableStateOf("") }
@@ -129,7 +139,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Uni
             name.value.isNotEmpty() &&
                     amount.value.isNotEmpty() &&
                     amount.value.toDoubleOrNull() != null &&
-                    date.value != 0L &&
+                    date.longValue != 0L &&
                     category.value.isNotEmpty() &&
                     type.value.isNotEmpty()
         }
@@ -167,7 +177,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Uni
         ExpenseTextView(text = "Date", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
-            value = if (date.value == 0L) "" else Utils.fromatDatetoHumanReadableForm(date.value),
+            value = if (date.longValue == 0L) "" else Utils.fromatDatetoHumanReadableForm(date.longValue),
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
@@ -198,9 +208,10 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Uni
             onClick = {
                 val model = ExpenseEntity(
                     null,
+                    userId,
                     name.value,
                     amount.value.toDoubleOrNull() ?: 0.0,
-                    Utils.fromatDatetoHumanReadableForm(date.value),
+                    Utils.fromatDatetoHumanReadableForm(date.longValue),
                     category.value,
                     type.value
                 )
@@ -219,7 +230,7 @@ fun DataForm(modifier: Modifier, onAddExpenseClick:(model: ExpenseEntity) -> Uni
     if (dateDialogVisibility.value) {
         ExpenseDatePickerDialog(
             onDateSelected = {
-                date.value = it
+                date.longValue = it
                 dateDialogVisibility.value = false
             },
             onDismiss = {
@@ -258,7 +269,7 @@ fun ExpenseDatePickerDialog(
 @Composable
 fun ExpenseDropDown(listOfItems: List<String>,onItemSelected:(item:String) ->Unit) {
     val expanded = remember { mutableStateOf(false) }
-    val selectedItem = remember { mutableStateOf<String>(listOfItems[0]) }
+    val selectedItem = remember { mutableStateOf(listOfItems[0]) }
     ExposedDropdownMenuBox(expanded = expanded.value, onExpandedChange = { expanded.value = it}) {
         TextField(value = selectedItem.value, onValueChange = {},
             modifier = Modifier
@@ -284,5 +295,7 @@ fun ExpenseDropDown(listOfItems: List<String>,onItemSelected:(item:String) ->Uni
 @Preview
 @Composable
 fun AddExpensePreview() {
-    AddExpense(rememberNavController())
+    val navController = rememberNavController()
+    val mockUserId = "mockUserId"  // Replace with an appropriate mock user ID
+    AddExpense(navController, mockUserId)
 }

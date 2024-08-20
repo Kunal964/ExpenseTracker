@@ -9,4 +9,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light">#8B8790</color>
+
+    <color name="colorPrimary">#92A3FD</color>
+    <color name="colorSecondary">#9DCEFF</color>
+    <color name="colorText">#1D1617</color>
+    <color name="colorAccent">#C58BF2</color>
+    <color name="colorGray">#7B6F72</color>
+    <color name="bgColor">#FFF7F8F8</color>
+
+    <color name="gradientStart">#FF6F00</color> <!-- A warm orange color -->
+    <color name="gradientEnd">#FF8F00</color>   <!-- A lighter orange color -->
 </resources>

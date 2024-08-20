@@ -1,18 +1,26 @@
 package com.example.expensetracker.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.expensetracker.R
 import androidx.lifecycle.viewModelScope
+import com.example.expensetracker.Navigation.PostOfficeAppRouter
+import com.example.expensetracker.Navigation.Screen
 import kotlinx.coroutines.launch
 import com.example.expensetracker.Utils
 import com.example.expensetracker.data.ExpenseDataBase
 import com.example.expensetracker.data.dao.ExpenseDao
 import com.example.expensetracker.data.model.ExpenseEntity
+import com.google.firebase.auth.FirebaseAuth
 
-class HomeViewModel(private val dao: ExpenseDao): ViewModel() {
-    val expenses = dao.getAllExpense()
+class HomeViewModel(
+    private val dao: ExpenseDao,
+    val userId: String
+): ViewModel() {
+    private val TAG = HomeViewModel::class.simpleName
+    val expenses = dao.getAllExpense(userId = userId)
 
     fun getBalance(list: List<ExpenseEntity>) : String {
         var balance = 0.0
@@ -62,17 +70,19 @@ class HomeViewModel(private val dao: ExpenseDao): ViewModel() {
 
     fun clearTransactions() {
         viewModelScope.launch {
-            dao.deleteAll()
+            dao.deleteAll(userId = userId)
         }
     }
 }
 
-class HomeViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class HomeViewModelFactory(private val context: Context, private val userId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             val dao = ExpenseDataBase.getDatabase(context).expenseDao()
-            return HomeViewModel(dao) as T
+            return HomeViewModel(dao, userId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+

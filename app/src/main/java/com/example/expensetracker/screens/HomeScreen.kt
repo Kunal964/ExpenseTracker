@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.expensetracker.R
@@ -49,8 +50,11 @@ import com.example.expensetracker.widget.ExpenseTextView
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier) {
-    val viewModel: HomeViewModel = HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
+fun HomeScreen(navController: NavController, userId: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(context, userId)
+    )
     val showDialog = remember { mutableStateOf(false) }
     val state = viewModel.expenses.collectAsState(initial = emptyList())
     val expenses = viewModel.getTotalExpense(state.value)
@@ -281,5 +285,7 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen(rememberNavController())
+    val navController = rememberNavController()
+    val mockUsrId = "mockUserId"
+    HomeScreen(navController, mockUsrId)
 }

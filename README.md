@@ -11,9 +11,11 @@ An Android Expense Tracker application built using Jetpack Compose, Room databas
 ## Screenshots
 
 ![Splash Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/splashscreen.jpg).
-![Home Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/HomeScreen1.jpg)
+![SignUp Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/SignupScreen.jpg).
+![Login Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/LoginScreen.jpg).
 ![Home Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/Homescreen.jpg)
-![Add Expense Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AddExpense.jpg)
+![Alert Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AlertDialog.jpg)
+![Add Expense Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AddExpenseScreen.jpg)
 ![Profile Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/profileScreen.jpg)
 
 ## Installation

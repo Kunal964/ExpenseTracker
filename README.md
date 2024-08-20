@@ -10,13 +10,20 @@ An Android Expense Tracker application built using Jetpack Compose, Room databas
 
 ## Screenshots
 
-![Splash Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/splashscreen.jpg).
-![SignUp Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/SignupScreen.jpg).
-![Login Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/LoginScreen.jpg).
-![Home Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/Homescreen.jpg)
-![Alert Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AlertDialog.jpg)
-![Add Expense Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AddExpenseScreen.jpg)
-![Profile Screen](https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/profileScreen.jpg)
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/splashscreen.jpg" alt="Splash Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/SignupScreen.jpg" alt="SignUp Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/LoginScreen.jpg" alt="Login Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/Homescreen.jpg" alt="Home Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AlertDialog.jpg" alt="Alert Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/AddExpenseScreen.jpg" alt="Add Expense Screen" width="300"/>
+
+<img src="https://github.com/Kunal964/ExpenseTracker/blob/main/Screenshots/profileScreen.jpg" alt="Profile Screen" width="300"/>
+
 
 ## Installation
 

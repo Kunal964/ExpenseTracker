@@ -12,7 +12,7 @@ fun NavHostScreen(navController: NavHostController, userId: String) {
             BottomBarScreen(navController, userId = userId)
         }
         composable(route = "/home") {
-            HomeScreen(navController,userId = userId)
+            HomeScreen(userId = userId)
         }
         composable(route = "/add") {
             AddExpense(navController, userId = userId)

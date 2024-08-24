@@ -50,9 +50,9 @@ class LoginViewModel : ViewModel() {
 
                 if(it.isSuccessful){
                     loginInProgress.value = false
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                     Log.d(TAG, "User ID: $userId")
-                    PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen)
+                    PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen(userId = userId))
                 }
             }
             .addOnFailureListener {
@@ -65,24 +65,24 @@ class LoginViewModel : ViewModel() {
 
     }
 
-    }
+}
 
 
-    fun LoginViewModel.onEvent(event: LoginUIEvent) {
-        when (event) {
-            is LoginUIEvent.EmailChanged -> {
-                loginUIState.value = loginUIState.value.copy(email = event.email)
-            }
-
-            is LoginUIEvent.PasswordChanged -> {
-                loginUIState.value = loginUIState.value.copy(password = event.password)
-            }
-
-            is LoginUIEvent.LoginButtonClicked -> {
-                login()
-            }
+fun LoginViewModel.onEvent(event: LoginUIEvent) {
+    when (event) {
+        is LoginUIEvent.EmailChanged -> {
+            loginUIState.value = loginUIState.value.copy(email = event.email)
         }
-        validateLoginUIDataWithRules()
 
+        is LoginUIEvent.PasswordChanged -> {
+            loginUIState.value = loginUIState.value.copy(password = event.password)
+        }
+
+        is LoginUIEvent.LoginButtonClicked -> {
+            login()
+        }
     }
+    validateLoginUIDataWithRules()
+
+}
 

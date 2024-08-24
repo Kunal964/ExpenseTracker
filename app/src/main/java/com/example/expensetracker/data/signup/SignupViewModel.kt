@@ -140,9 +140,9 @@ class SignupViewModel : ViewModel() {
 
                 signUpInProgress.value = false
                 if (it.isSuccessful) {
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                     Log.d(TAG, "User ID: $userId")
-                    PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen)
+                    PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen(userId = userId))
                 }
             }
             .addOnFailureListener {

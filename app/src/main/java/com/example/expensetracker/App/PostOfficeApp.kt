@@ -8,6 +8,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.expensetracker.Navigation.PostOfficeAppRouter
@@ -18,13 +19,15 @@ import com.example.expensetracker.viewmodel.BottomScreenViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 @Composable
 fun PostOfficeApp(userId: String) {
+    val context = LocalContext.current
     val firebaseAuth = FirebaseAuth.getInstance()
     val firestore = FirebaseFirestore.getInstance()
 
     val bottomViewModel: BottomScreenViewModel = viewModel(
-        factory = BottomScreenViewModelFactory(userId, firebaseAuth, firestore)
+        factory = BottomScreenViewModelFactory(userId, firebaseAuth, firestore, context)
     )
 
     val navController = rememberNavController()
@@ -42,7 +45,7 @@ fun PostOfficeApp(userId: String) {
                 .background(Color.White)
         ) {
             if (bottomViewModel.isUserLoggedIn.value == true) {
-                PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen)
+                PostOfficeAppRouter.navigateTo(Screen.BottomBarScreen(userId = userId))
             }
 
             Crossfade(targetState = PostOfficeAppRouter.currentScreen) { currentScreen ->

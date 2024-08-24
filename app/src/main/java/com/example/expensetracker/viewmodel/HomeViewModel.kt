@@ -22,6 +22,12 @@ class HomeViewModel(
     private val TAG = HomeViewModel::class.simpleName
     val expenses = dao.getAllExpense(userId = userId)
 
+    fun deleteExpense(expenseEntity: ExpenseEntity) {
+        viewModelScope.launch {
+            dao.deleteExpense(expenseEntity)
+        }
+    }
+
     fun getBalance(list: List<ExpenseEntity>) : String {
         var balance = 0.0
         list.forEach{
@@ -75,6 +81,7 @@ class HomeViewModel(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 class HomeViewModelFactory(private val context: Context, private val userId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(HomeViewModel::class.java)) {

@@ -1,18 +1,18 @@
 package com.example.expensetracker.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.expensetracker.data.model.ExpenseEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
 
     @Query("SELECT * FROM expenses WHERE userId = :userId")
-    fun getAllExpense(userId: String): Flow<List<ExpenseEntity>>
+    fun getAllExpense(userId: String): LiveData<List<ExpenseEntity>>
 
     @Insert
     suspend fun insertExpense(expenseEntity: ExpenseEntity)

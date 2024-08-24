@@ -7,7 +7,7 @@ sealed class Screen() {
     object SignUpScreen : Screen()
     object TermsAndConditionScreen : Screen()
     object LoginScreen : Screen()
-    object BottomBarScreen : Screen()
+    data class BottomBarScreen(val userId: String) : Screen()
 }
 object PostOfficeAppRouter {
     val currentScreen: MutableState<Screen> = mutableStateOf(Screen.SignUpScreen)

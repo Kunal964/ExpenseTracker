@@ -16,15 +16,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.expensetracker.Navigation.PostOfficeAppRouter
+import com.example.expensetracker.Navigation.Screen
 import com.example.expensetracker.data.NavItem
 import com.example.expensetracker.viewmodel.BottomScreenViewModel
 import com.example.expensetracker.viewmodel.BottomScreenViewModelFactory
@@ -33,12 +37,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun BottomBarScreen(navController: NavController, userId: String) {
+    val context = LocalContext.current
     val firebaseAuth = FirebaseAuth.getInstance()
     val firestore = FirebaseFirestore.getInstance()
 
     val viewModel: BottomScreenViewModel = viewModel(
-        factory = BottomScreenViewModelFactory(userId, firebaseAuth, firestore)
+        factory = BottomScreenViewModelFactory(userId, firebaseAuth, firestore, context)
     )
+
+    val isUserLoggedIn by viewModel.isUserLoggedIn.observeAsState(false)
+
+    if (!isUserLoggedIn) {
+        // Navigate back to login screen if not logged in
+        PostOfficeAppRouter.navigateTo(Screen.LoginScreen)
+    }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val navItemList = listOf(
@@ -88,7 +100,7 @@ fun BottomBarScreen(navController: NavController, userId: String) {
 @Composable
 fun ContentScreen(navController: NavController, modifier: Modifier = Modifier, selectedIndex: Int, userId: String) {
     when (selectedIndex) {
-        0 -> HomeScreen(navController = navController, modifier = modifier, userId = userId)
+        0 -> HomeScreen(userId = userId, modifier = modifier)
         1 -> AddExpense(navController = navController, userId = userId)
         2 -> PersonScreen(navController = navController)
     }

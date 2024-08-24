@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,26 +39,34 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.expensetracker.R
 import com.example.expensetracker.data.model.ExpenseEntity
 import com.example.expensetracker.viewmodel.HomeViewModel
 import com.example.expensetracker.viewmodel.HomeViewModelFactory
 import com.example.expensetracker.widget.ExpenseTextView
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController, userId: String, modifier: Modifier = Modifier) {
+fun HomeScreen(userId: String, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(context, userId)
     )
     val showDialog = remember { mutableStateOf(false) }
-    val state = viewModel.expenses.collectAsState(initial = emptyList())
-    val expenses = viewModel.getTotalExpense(state.value)
-    val income = viewModel.getTotalIncome(state.value)
-    val balance = viewModel.getBalance(state.value)
+    val state by viewModel.expenses.observeAsState(initial = emptyList())
+    val expenses = viewModel.getTotalExpense(state)
+    val income = viewModel.getTotalIncome(state)
+    val balance = viewModel.getBalance(state)
 
     Scaffold(
         topBar = {
@@ -139,7 +146,7 @@ fun HomeScreen(navController: NavController, userId: String, modifier: Modifier 
                             bottom.linkTo(parent.bottom)
                             height = Dimension.fillToConstraints
                         },
-                    list = state.value,
+                    list = state,
                     viewModel = viewModel
                 )
             }
@@ -236,7 +243,13 @@ fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int)  
 }
 
 @Composable
-fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: HomeViewModel) {
+fun TransactionList(
+    modifier: Modifier,
+    viewModel: HomeViewModel,
+    list: List<ExpenseEntity>
+) {
+    val transactions by viewModel.expenses.observeAsState(initial = emptyList())
+
     LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -248,44 +261,94 @@ fun TransactionList(modifier: Modifier, list: List<ExpenseEntity>, viewModel: Ho
                 )
             }
         }
-        items(list) { item ->
+        items(transactions, key = { it.id ?: 0 }) { item ->
             TransactionItem(
                 title = item.title,
                 amount = item.amount.toString(),
                 icon = viewModel.getItemIcon(item),
                 date = item.date,
-                color = if (item.type == "Income") Color.Green else Color.Red
+                color = if (item.type == "Income") Color.Green else Color.Red,
+                onDismiss = {
+                    viewModel.deleteExpense(item)  // Delete from database
+                }
             )
         }
     }
 }
 
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionItem(title: String, amount: String, icon: Int, date: String, color: Color) {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 9.dp)){
-        Row {
-            Image(
-                painter =  painterResource(id = icon), contentDescription = null,
-                modifier = Modifier.size(50.dp)
+fun TransactionItem(
+    title: String,
+    amount: String,
+    icon: Int,
+    date: String,
+    color: Color,
+    onDismiss: () -> Unit
+) {
+    val swipeState = rememberSwipeToDismissBoxState()
+
+    LaunchedEffect(swipeState.currentValue) {
+        if (swipeState.currentValue == SwipeToDismissBoxValue.StartToEnd || swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            onDismiss()
+        }
+    }
+
+    SwipeToDismissBox(
+        state = swipeState,
+        backgroundContent = {
+            val direction = swipeState.dismissDirection
+            val backgroundColor = when (direction) {
+                SwipeToDismissBoxValue.StartToEnd, SwipeToDismissBoxValue.EndToStart -> Color.Red
+                else -> Color.Transparent
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(backgroundColor)
+                    .padding(16.dp)
             )
-            Spacer(modifier = Modifier.size(8.dp))
-            Column {
-                ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Spacer(modifier = Modifier.size(5.dp))
-                ExpenseTextView(text = date, fontSize = 13.sp)
+        },
+        content = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 9.dp)
+            ) {
+                Row {
+                    Image(
+                        painter = painterResource(id = icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Column {
+                        ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Spacer(modifier = Modifier.size(5.dp))
+                        ExpenseTextView(text = date, fontSize = 13.sp)
+                    }
+                }
+                ExpenseTextView(
+                    text = amount,
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    color = color,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
-        ExpenseTextView(text = amount, fontSize = 20.sp, modifier = Modifier.align(Alignment.CenterEnd),
-            color = color, fontWeight = FontWeight.SemiBold)
-    }
+    )
 }
+
+
 
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    val navController = rememberNavController()
+    rememberNavController()
     val mockUsrId = "mockUserId"
-    HomeScreen(navController, mockUsrId)
+    HomeScreen(mockUsrId)
 }

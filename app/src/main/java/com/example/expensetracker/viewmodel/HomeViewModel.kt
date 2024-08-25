@@ -20,7 +20,7 @@ class HomeViewModel(
     val userId: String
 ): ViewModel() {
     private val TAG = HomeViewModel::class.simpleName
-    val expenses = dao.getAllExpense(userId = userId)
+    val expenses = dao.getAllExpenseLiveData(userId = userId)
 
     fun deleteExpense(expenseEntity: ExpenseEntity) {
         viewModelScope.launch {
